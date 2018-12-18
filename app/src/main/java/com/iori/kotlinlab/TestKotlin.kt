@@ -27,6 +27,21 @@ class Rectangle(var height:Double, var width:Double) :
 
 }
 
+interface Source<out T> {
+    fun nextT(): T?
+}
+
+class NetSource : Source<Int>{
+    override fun nextT(): Int? {
+        return null
+    }
+
+}
+
+class Temp<out T,in X> {
+    fun nextT(): T? {return null}
+}
+
 class TestKotlin{
 
     companion object {

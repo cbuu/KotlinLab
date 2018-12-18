@@ -2,18 +2,39 @@ package com.iori.kotlinlab
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
+import com.iori.kotlinlab.adapter.MyAdapter
+import com.iori.kotlinlab.model.AppInfo
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    var adapter:MyAdapter? = null
+    var data:MutableList<AppInfo> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG,"onCreate")
         setContentView(R.layout.activity_main)
 
-        test()
-        // Example of a call to a native method
-        sample_text.text = stringFromJNI()
+        fetchData()
+        initView()
+    }
+
+    fun fetchData(){
+        data.add(AppInfo("腾讯视频","http://img5.imgtn.bdimg.com/it/u=709985803,4008626984&fm=26&gp=0.jpg"))
+        data.add(AppInfo("腾讯音乐","http://img5.imgtn.bdimg.com/it/u=709985803,4008626984&fm=26&gp=0.jpg"))
+        data.add(AppInfo("腾讯读书","http://img5.imgtn.bdimg.com/it/u=709985803,4008626984&fm=26&gp=0.jpg"))
+    }
+
+    fun initView(){
+        title_view.text = "测试"
+
+        adapter = MyAdapter(data)
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.adapter = adapter
     }
 
     fun test() {
@@ -34,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         if (num != null){
             Log.d(TAG,"num is ${num * num}")
         }
+
+        var appInfo = AppInfo("","");
+        var t = appInfo.copy()
     }
 
     /**
