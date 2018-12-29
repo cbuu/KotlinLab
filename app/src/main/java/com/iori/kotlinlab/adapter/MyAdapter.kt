@@ -9,16 +9,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.iori.kotlinlab.R
-import com.iori.kotlinlab.model.AppInfo
+import com.iori.kotlinlab.model.AppItem
 import kotlinx.android.synthetic.main.activity_main.view.*
 
 
-class MyAdapter(var data:List<AppInfo>) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
+class MyAdapter(var data:List<AppItem>) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
 
 
     interface OnClickItemListener{
-        fun onClickItem(appInfo: AppInfo)
+        fun onClickItem(appItem: AppItem)
     }
 
     var listener : OnClickItemListener? = null
@@ -36,11 +36,11 @@ class MyAdapter(var data:List<AppInfo>) : RecyclerView.Adapter<MyAdapter.MyViewH
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         Log.d(TAG,"onBindViewHolder")
-        val appInfo = data[position]
-        Glide.with(holder.ivIcon.context).load(appInfo.iconUrl).into(holder.ivIcon)
-        holder.txName.text = appInfo.appId
+        val item = data[position]
+        Glide.with(holder.ivIcon.context).load(item.url).into(holder.ivIcon)
+        holder.txName.text = item.app_name
 
-        holder.itemView.setOnClickListener { v: View? -> listener?.onClickItem(appInfo) }
+        holder.itemView.setOnClickListener { v: View? -> listener?.onClickItem(item) }
     }
 
 

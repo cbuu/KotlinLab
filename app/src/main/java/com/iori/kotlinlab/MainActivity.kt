@@ -1,40 +1,87 @@
 package com.iori.kotlinlab
 
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import com.iori.kotlinlab.adapter.MyAdapter
-import com.iori.kotlinlab.model.AppInfo
+import com.iori.kotlinlab.model.AppItem
+import com.iori.kotlinlab.model.NetRespond
+import com.iori.kotlinlab.net.NetApi
+import com.iori.kotlinlab.net.NetCore
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.annotations.SchedulerSupport
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
-    var adapter:MyAdapter? = null
-    var data:MutableList<AppInfo> = mutableListOf()
+    lateinit var adapter:MyAdapter
+    var data:MutableList<AppItem> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG,"onCreate")
         setContentView(R.layout.activity_main)
 
+
         fetchData()
         initView()
     }
 
+    @SuppressLint("CheckResult")
     fun fetchData(){
-        data.add(AppInfo("腾讯视频","http://img5.imgtn.bdimg.com/it/u=709985803,4008626984&fm=26&gp=0.jpg"))
-        data.add(AppInfo("腾讯音乐","http://img5.imgtn.bdimg.com/it/u=709985803,4008626984&fm=26&gp=0.jpg"))
-        data.add(AppInfo("腾讯读书","http://img5.imgtn.bdimg.com/it/u=709985803,4008626984&fm=26&gp=0.jpg"))
+        val api = NetCore.createService(NetApi::class.java)
+        api.getApplist()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    for (i in it.app_list){
+                        Log.d(TAG,"name:${i.app_name} url:${i.url}")
+                        data.add(i)
+                    }
+                },{
+                  it.printStackTrace()
+                },{
+                    Log.d(TAG,"success")
+                    adapter.notifyDataSetChanged()
+                })
+
+        Service
     }
 
     fun initView(){
         title_view.text = "测试"
 
         adapter = MyAdapter(data)
-        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
         recycler_view.adapter = adapter
+
+        adapter.listener = object : MyAdapter.OnClickItemListener{
+            override fun onClickItem(appInfo: AppItem) {
+                Log.d(TAG,"click $appInfo")
+            }
+        }
+
+
+
+        val a:(Int,(Int)->Int) -> Unit = { c,t ->
+            t(2)
+            print("")
+        }
+
+        val b = a(1) { x -> x*x }
+
+        with("String",{
+
+        })
     }
 
     fun test() {
@@ -56,7 +103,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG,"num is ${num * num}")
         }
 
-        var appInfo = AppInfo("","");
+        var appInfo = AppItem("","")
         var t = appInfo.copy()
     }
 
